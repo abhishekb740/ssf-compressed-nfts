@@ -38,6 +38,8 @@ dotenv.config();
     ? loadKeypairFromFile(process.env?.LOCAL_PAYER_JSON_ABSPATH)
     : loadOrGenerateKeypair("payer");
 
+  console.log("==== Keypairs loaded ====", payer);
+
   console.log("Payer address:", payer.publicKey.toBase58());
   console.log("Test wallet address:", testWallet.publicKey.toBase58());
 
@@ -65,7 +67,7 @@ dotenv.config();
   //////////////////////////////////////////////////////////////////////////////
 
   // load the env variables and store the cluster RPC url
-  const CLUSTER_URL = process.env.RPC_URL ?? clusterApiUrl("devnet");
+  const CLUSTER_URL = process.env.RPC_URL ?? 'https://mainnet.helius-rpc.com/?api-key=9c284da0-d1c0-4afc-968a-113feff36f4b';
 
   // create a new rpc connection, using the ReadApi wrapper
   const connection = new WrapperConnection(CLUSTER_URL);

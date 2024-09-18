@@ -77,7 +77,7 @@ let initBalance: number, balance: number;
   //////////////////////////////////////////////////////////////////////////////
 
   // load the env variables and store the cluster RPC url
-  const CLUSTER_URL = process.env.RPC_URL ?? clusterApiUrl("devnet");
+  const CLUSTER_URL = process.env.RPC_URL ?? 'https://mainnet.helius-rpc.com/?api-key=9c284da0-d1c0-4afc-968a-113feff36f4b';
 
   // create a new rpc connection, using the ReadApi wrapper
   const connection = new WrapperConnection(CLUSTER_URL, "confirmed");
@@ -101,12 +101,12 @@ let initBalance: number, balance: number;
   */
   const maxDepthSizePair: ValidDepthSizePair = {
     // max=8 nodes
-    maxDepth: 3,
-    maxBufferSize: 8,
+    // maxDepth: 3,
+    // maxBufferSize: 8,
 
     // max=16,384 nodes
-    // maxDepth: 5,
-    // maxBufferSize: 8,
+    maxDepth: 5,
+    maxBufferSize: 8,
 
     // max=131,072 nodes
     // maxDepth: 17,
@@ -120,7 +120,7 @@ let initBalance: number, balance: number;
     // maxDepth: 30,
     // maxBufferSize: 2048,
   };
-  const canopyDepth = 0;
+  // const canopyDepth = maxDepthSizePair.maxDepth - 5;
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
@@ -135,26 +135,26 @@ let initBalance: number, balance: number;
   */
 
   // calculate the space available in the tree
-  const requiredSpace = getConcurrentMerkleTreeAccountSize(
-    maxDepthSizePair.maxDepth,
-    maxDepthSizePair.maxBufferSize,
-    canopyDepth,
-  );
+  // const requiredSpace = getConcurrentMerkleTreeAccountSize(
+  //   maxDepthSizePair.maxDepth,
+  //   maxDepthSizePair.maxBufferSize,
+  //   canopyDepth,
+  // );
 
-  const storageCost = await connection.getMinimumBalanceForRentExemption(requiredSpace);
+  // const storageCost = await connection.getMinimumBalanceForRentExemption(requiredSpace);
 
   // demonstrate data points for compressed NFTs
-  console.log("Space to allocate:", numberFormatter(requiredSpace), "bytes");
-  console.log("Estimated cost to allocate space:", numberFormatter(storageCost / LAMPORTS_PER_SOL));
-  console.log(
-    "Max compressed NFTs for tree:",
-    numberFormatter(Math.pow(2, maxDepthSizePair.maxDepth)),
-    "\n",
-  );
+  // console.log("Space to allocate:", numberFormatter(requiredSpace), "bytes");
+  // console.log("Estimated cost to allocate space:", numberFormatter(storageCost / LAMPORTS_PER_SOL));
+  // console.log(
+  //   "Max compressed NFTs for tree:",
+  //   numberFormatter(Math.pow(2, maxDepthSizePair.maxDepth)),
+  //   "\n",
+  // );
 
   // ensure the payer has enough balance to create the allocate the Merkle tree
-  if (initBalance < storageCost) return console.error("Not enough SOL to allocate the merkle tree");
-  printConsoleSeparator();
+  // if (initBalance < storageCost) return console.error("Not enough SOL to allocate the merkle tree");
+  // printConsoleSeparator();
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
@@ -164,14 +164,14 @@ let initBalance: number, balance: number;
   */
 
   // define the address the tree will live at
-  const treeKeypair = Keypair.generate();
+  // const treeKeypair = Keypair.generate();
 
   // create and send the transaction to create the tree on chain
-  const tree = await createTree(connection, payer, treeKeypair, maxDepthSizePair, canopyDepth);
+  // const tree = await createTree(connection, payer, treeKeypair, maxDepthSizePair, canopyDepth);
 
   // locally save the addresses for the demo
-  savePublicKeyToFile("treeAddress", tree.treeAddress);
-  savePublicKeyToFile("treeAuthority", tree.treeAuthority);
+  // savePublicKeyToFile("treeAddress", tree.treeAddress);
+  // savePublicKeyToFile("treeAuthority", tree.treeAuthority);
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
@@ -253,34 +253,34 @@ let initBalance: number, balance: number;
   };
 
   // fully mint a single compressed NFT to the payer
-  console.log(`Minting a single compressed NFT to ${payer.publicKey.toBase58()}...`);
+  // console.log(`Minting a single compressed NFT to ${payer.publicKey.toBase58()}...`);
 
-  await mintCompressedNFT(
-    connection,
-    payer,
-    treeKeypair.publicKey,
-    collection.mint,
-    collection.metadataAccount,
-    collection.masterEditionAccount,
-    compressedNFTMetadata,
-    // mint to this specific wallet (in this case, the tree owner aka `payer`)
-    payer.publicKey,
-  );
+  // await mintCompressedNFT(
+  //   connection,
+  //   payer,
+  //   treeKeypair.publicKey,
+  //   collection.mint,
+  //   collection.metadataAccount,
+  //   collection.masterEditionAccount,
+  //   compressedNFTMetadata,
+  //   // mint to this specific wallet (in this case, the tree owner aka `payer`)
+  //   payer.publicKey,
+  // );
 
   // fully mint a single compressed NFT
-  console.log(`Minting a single compressed NFT to CxjawXnJxAyb7Zx3xCkSD3nxamdpcfSikvnnC7C8RMHh`);
+  // console.log(`Minting a single compressed NFT to CxjawXnJxAyb7Zx3xCkSD3nxamdpcfSikvnnC7C8RMHh`);
 
-  await mintCompressedNFT(
-    connection,
-    payer,
-    treeKeypair.publicKey,
-    collection.mint,
-    collection.metadataAccount,
-    collection.masterEditionAccount,
-    compressedNFTMetadata,
-    // mint to this specific wallet (in this case, airdrop to `testWallet`)
-    new PublicKey("CxjawXnJxAyb7Zx3xCkSD3nxamdpcfSikvnnC7C8RMHh"),
-  );
+  // await mintCompressedNFT(
+  //   connection,
+  //   payer,
+  //   treeKeypair.publicKey,
+  //   collection.mint,
+  //   collection.metadataAccount,
+  //   collection.masterEditionAccount,
+  //   compressedNFTMetadata,
+  //   // mint to this specific wallet (in this case, airdrop to `testWallet`)
+  //   new PublicKey("CxjawXnJxAyb7Zx3xCkSD3nxamdpcfSikvnnC7C8RMHh"),
+  // );
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
